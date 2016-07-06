@@ -16,9 +16,13 @@ RPi.GPIO.setup(17, RPi.GPIO.OUT)
 RPi.GPIO.setup(22, RPi.GPIO.OUT)
 RPi.GPIO.setup(27, RPi.GPIO.OUT)
 p = RPi.GPIO.PWM(22, 50)
-m = RPi.GPIO.PWM(27, 50)
+m = RPi.GPIO.PWM(27, 50)                                   
+a = RPi.GPIO.PWM(4, 50)
+s = RPi.GPIO.PWM(17, 50)
 p.start(0)
 m.start(0)
+a.start(0)
+s.start(0)
 
 def Drive(direction):
     # GPIO 27 is 13, GPIO 22 is is 15
@@ -28,23 +32,29 @@ def Drive(direction):
         m.ChangeDutyCycle(0)
     elif direction < 0:
         p.ChangeDutyCycle(0)
-        m.ChangeDutyCycle(-direction)
+        m.ChangeDutyCycle(direction)
     else:
         p.ChangeDutyCycle(0)
         m.ChangeDutyCycle(0)
 
-def Turn(speed):
+def Turn(dire):
     #port 2 is 5v, 6 is ground, GPIO 4 is 7, GPIO 17 is is 11
-    
-    if speed == 1:
-        RPi.GPIO.output(4, True) #right
-        RPi.GPIO.output(17, False)
-    elif speed == 0 or speed == 2:
-        RPi.GPIO.output(4, False) #straight
-        RPi.GPIO.output(17, False)
+    spe = 100
+    if dire == 1:
+        #RPi.GPIO.output(4, True) #right
+        #RPi.GPIO.output(17, False)
+        a.ChangeDutyCycle(0)
+        s.ChangeDutyCycle(spe)
+    elif dire == 0 or dire == 2:
+        #RPi.GPIO.output(4, False) #straight
+        #RPi.GPIO.output(17, False)
+        a.ChangeDutyCycle(0)
+        s.ChangeDutyCycle(0)
     else:
-        RPi.GPIO.output(4, False) #left
-        RPi.GPIO.output(17, True)
+        #RPi.GPIO.output(4, False) #left
+        #RPi.GPIO.output(17, True)
+        a.ChangeDutyCycle(spe)
+        s.ChangeDutyCycle(0)
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -99,7 +109,7 @@ while 1:
     if radius > 200:
         speed = 0
     elif radius > 0:
-        speed = 75
+        speed = 50
     else:
         speed = 0
 
